@@ -127,8 +127,8 @@ impl VntApi {
             Ok(compressor) => compressor,
             Err(e) => Err(anyhow!("{:?}", e))?,
         };
-        let local_ipv4:Option<Ipv4Addr> = if let Some(local_ipv4) = vnt_config.local_ipv4{
-            Some(local_ipv4.parse().context("localIP")?)
+        let local_ipv4: Option<String> = if let Some(local_ipv4) = vnt_config.local_ipv4 {
+            Some(local_ipv4.parse::<Ipv4Addr>().context("localIP")?.to_string())
         }else{
             None
         };
