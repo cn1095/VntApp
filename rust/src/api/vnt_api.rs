@@ -660,6 +660,8 @@ impl From<ErrorType> for RustErrorType {
             ErrorType::InvalidIp => RustErrorType::InvalidIp,
             ErrorType::LocalIpExists => RustErrorType::LocalIpExists,
             ErrorType::Unknown => RustErrorType::Unknown,
+            ErrorType::FailedToCrateDevice => RustErrorType::FailedToCrateDevice, // 处理 FailedToCrateDevice
+            ErrorType::Warn => RustErrorType::Warn,
         }
     }
 }
