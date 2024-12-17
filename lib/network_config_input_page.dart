@@ -376,7 +376,7 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                       value = last;
                     }
                     final txtRegex = RegExp(r'^txt:');
-                    final addressPortRegex = RegExp(r'^(.+):(\d{1,5})$');
+                    final addressPortRegex = RegExp(r'^([a-zA-Z0-9.-]+)(?::(\d+))?$'); // 允许端口可选
 
                     if (txtRegex.hasMatch(value)) {
                       if (_communicationMethod != 'UDP' &&
@@ -392,21 +392,25 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                     } else {
                       final match = addressPortRegex.firstMatch(value);
                       if (match != null) {
-                        final domainRegex = RegExp(r'^[a-zA-Z0-9.-]');
-                        if (!domainRegex.hasMatch(match.group(1)!)) {
+                        final domain = match.group(1); // 提取域名部分
+                        final portStr = match.group(2); // 提取端口部分（可选）
+                        // 验证域名格式
+                        final domainRegex = RegExp(r'^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+                        if (!domainRegex.hasMatch(domain!)) {
                           return '地址格式错误';
                         }
-                        final port = int.tryParse(match.group(2)!);
-                        if (port != null && port >= 1 && port <= 65535) {
-                          return null;
-                        } else {
-                          return '端口错误';
+                        // 验证端口（如果存在）
+                        if (portStr != null) {
+                        final port = int.tryParse(portStr);
+                        if (port == null || port < 1 || port > 65535) {
+                            return '端口错误';
                         }
-                      } else if (_communicationMethod == 'UDP' ||
-                          _communicationMethod == 'TCP') {
-                        return '地址格式错误';
-                      }
-                    }
+                        }
+                            return null; // 验证通过
+                        } else if (_communicationMethod == 'UDP' || _communicationMethod == 'TCP') {
+                            return '地址格式错误';
+                        }
+                        }
                     return null;
                   },
                 ),
