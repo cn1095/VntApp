@@ -106,6 +106,9 @@ flutter:
   # see https://flutter.dev/custom-fonts/#from-packages
 
   assets:
+    - fonts/MaterialIcons-Regular.otf
     - assets/app_icon.ico
     - assets/app_icon.png
     - assets/log4rs.yaml
+flutter_icons:
+  no_tree_shake_icons: true
