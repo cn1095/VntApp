@@ -1107,7 +1107,7 @@ dependencies = [
 [[package]]
 name = "packet"
 version = "0.1.0"
-source = "git+https://github.com/vnt-dev/vnt.git?branch=1.2.x#13df028cd9e4eb178c83a966d8aa0207956c5b66"
+source = "git+https://github.com/cn1095/vnt.git?branch=Location"
 dependencies = [
  "byteorder",
 ]
@@ -1877,7 +1877,7 @@ dependencies = [
 [[package]]
 name = "tun"
 version = "0.1.0"
-source = "git+https://github.com/vnt-dev/vnt.git?branch=1.2.x#13df028cd9e4eb178c83a966d8aa0207956c5b66"
+source = "git+https://github.com/cn1095/vnt.git?branch=Location"
 dependencies = [
  "ioctl-sys",
  "libc",
@@ -1975,8 +1975,8 @@ checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
 
 [[package]]
 name = "vnt"
-version = "1.2.13"
-source = "git+https://github.com/vnt-dev/vnt.git?branch=1.2.x#13df028cd9e4eb178c83a966d8aa0207956c5b66"
+version = "1.2.14"
+source = "git+https://github.com/cn1095/vnt.git?branch=Location"
 dependencies = [
  "aes",
  "aes-gcm",
