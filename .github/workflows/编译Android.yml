@@ -10,16 +10,16 @@ on:
       so:
         description: '是否重新打包安卓.so'
         required: true
-        default: false
+        default: true
         type: boolean
       repo:
         description: '请输入vntAPP源码仓库'
         required: true
-        default: 'vnt-dev/VntApp'
+        default: 'cn1095/VntApp'
       tag:
         description: '请输入仓库分支或版本号'
         required: true
-        default: 'master'
+        default: 'Location'
 env:
   CARGO_TERM_COLOR: always
   TZ: Asia/Shanghai
