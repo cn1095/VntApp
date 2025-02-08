@@ -6,11 +6,11 @@ on:
       repo:
         description: '请输入vntAPP源码仓库'
         required: true
-        default: 'vnt-dev/VntApp'
+        default: 'cn1095/VntApp'
       tag:
         description: '请输入仓库分支或版本号'
         required: true
-        default: 'flutter'
+        default: 'Location'
 
 env:
   CARGO_TERM_COLOR: always
