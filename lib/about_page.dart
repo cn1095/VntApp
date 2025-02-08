@@ -32,7 +32,7 @@ class AboutPage extends StatelessWidget {
                 children: [
                   const Flexible(
                     child: SelectableText(
-                      "开放所有源代码 https://github.com/lbl8603/vnt",
+                      "开放所有源代码 https://github.com/vnt-dev/vnt",
                       style: TextStyle(fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
