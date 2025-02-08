@@ -39,7 +39,7 @@ class AboutPage extends StatelessWidget {
                   ),
                   TextButton(
                     onPressed: () {
-                      launchUrl(Uri.parse('https://github.com/lbl8603/vnt'));
+                      launchUrl(Uri.parse('https://github.com/vnt-dev/vnt'));
                     },
                     child: const Text('点击跳转'),
                   ),
@@ -47,7 +47,7 @@ class AboutPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               const Text(
-                '版本号: 1.2.14-重定向版',
+                '版本号: 1.2.16-重定向版',
                 style: TextStyle(fontSize: 16),
                 textAlign: TextAlign.center,
               ),
