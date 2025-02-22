@@ -114,7 +114,7 @@ jobs:
           git clone https://github.com/vnt-dev/VntApp -b flutter C:/vnt
           cd C:/vnt
           rm -f C:/vnt/rust/Cargo.lock
-          sed -i 's/1\.2\.x/${{ needs.check.outputs.ver }}/g' C:/vnt/rust/Cargo.toml
+          #sed -i 's/1\.2\.x/main/g' C:/vnt/rust/Cargo.toml
           cat C:/vnt/rust/Cargo.toml
           sed -i 's/1\.2\.11-预发布版/${{ needs.check.outputs.ver }}/g' C:/vnt/lib/about_page.dart
           cat C:/vnt/lib/about_page.dart
