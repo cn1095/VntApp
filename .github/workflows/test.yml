@@ -92,6 +92,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.19.6
       - name: 设置JDK环境
         if: ${{ startsWith(matrix.target, 'Android') }}
         uses: actions/setup-java@v4
@@ -114,7 +115,6 @@ jobs:
         if: ${{ startsWith(matrix.target, 'Windows') }}
         shell: bash
         run: |
-          exit 1
           git clone https://github.com/vnt-dev/VntApp -b flutter C:/vnt
           cd C:/vnt
           rm -f C:/vnt/rust/Cargo.lock
@@ -133,7 +133,7 @@ jobs:
 
           
       - name: 构建安卓so库
-        if: ${{ startsWith(matrix.target, 'Androi') }}
+        if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
@@ -194,7 +194,7 @@ jobs:
          sed -i 's|flutter.targetSdkVersion|33|' ./android/app/build.gradle
          echo '
           buildscript {
-            ext.kotlin_version = "1.8.10"  
+            ext.kotlin_version = "1.9.0"  
             repositories {
               google()
               mavenCentral()
