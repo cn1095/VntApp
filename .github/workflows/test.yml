@@ -133,7 +133,7 @@ jobs:
 
           
       - name: 构建安卓so库
-        if: ${{ startsWith(matrix.target, 'Android') }}
+        if: ${{ startsWith(matrix.target, 'Androi') }}
         run: |
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
