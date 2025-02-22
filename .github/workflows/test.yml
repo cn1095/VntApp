@@ -117,7 +117,7 @@ jobs:
           rm -f C:/vnt/rust/Cargo.lock
           #sed -i 's/1\.2\.x/main/g' C:/vnt/rust/Cargo.toml
           sed -i 's/1\.2\.11-预发布版/${{ needs.check.outputs.ver }}/g' C:/vnt/lib/about_page.dart
-          sed -i ':a; s/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/2' C:/vnt/rust/src/api/vnt_api.rs
+          sed -i 's/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/' C:/vnt/rust/src/api/vnt_api.rs
           sed -i '/ErrorType::Unknown => RustErrorType::Unknown,/a\    _ => RustErrorType::Unknown,' C:/vnt/rust/src/api/vnt_api.rs
           cat C:/vnt/rust/src/api/vnt_api.rs
           flutter pub get
