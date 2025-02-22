@@ -189,8 +189,8 @@ jobs:
          sed -i 's|7.6.3|8.1|' ./android/gradle/wrapper/gradle-wrapper.properties
          sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
          sed -i 's|19|21|' ./rust_builder/android/build.gradle
-         sed -i 's|flutter.compileSdkVersion|33|' ./android/app/build.gradle
-         sed -i 's|flutter.targetSdkVersion|33|' ./android/app/build.gradle
+         sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
+         sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
          echo '
           buildscript {
             ext.kotlin_version = "1.9.0"  
