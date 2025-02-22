@@ -183,6 +183,7 @@ jobs:
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
          cd /opt/vnt
+         rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
          sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
          sed -i "s|1.7.10|1.9.0|" ./android/settings.gradle
@@ -199,8 +200,8 @@ jobs:
               mavenCentral()
             }
             dependencies {
-              classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-              classpath "com.android.tools.build:gradle:7.4.2"  
+              classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21"
+              classpath "com.android.tools.build:gradle:8.1.0"  
             }
           }
           ' >> ./android/build.gradle
