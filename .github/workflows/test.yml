@@ -403,7 +403,7 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
         uses: Mattraks/delete-workflow-runs@main
         with:
-         token: ${{ secrets.GITHUB_TOKEN }}
+         token: ${{ secrets.GIT }}
          retain_days: 0
          keep_minimum_runs: 0
       - uses: gautamkrishnar/keepalive-workflow@v2
