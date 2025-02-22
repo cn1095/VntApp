@@ -92,7 +92,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.27.4
+          #flutter-version: 3.27.4
       - name: 设置JDK环境
         if: ${{ startsWith(matrix.target, 'Android') }}
         uses: actions/setup-java@v4
