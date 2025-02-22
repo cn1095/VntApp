@@ -181,6 +181,7 @@ jobs:
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
          cat ./lib/about_page.dart
          sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
+         sed -i "s|1.7.10|1.9.23|" ./android/settings.gradle
          sed -i 's|7.6.3|8.0|' ./android/gradle/wrapper/gradle-wrapper.properties
          sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
          sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
@@ -188,12 +189,13 @@ jobs:
 
          flutter pub get
          flutter upgrade
-         flutter build apk --release -v
+         flutter build apk --release
          find /opt/vnt -type f -name "*.apk"
          mkdir -p /opt/vntAPP
          mv -f /opt/vnt/build/app/outputs/flutter-apk/app-release.apk /opt/vntAPP/app-release.apk
          cd /opt/vntAPP
-         #生成签名文件keystore.jks
+         #生成签名文件keystore.jks 签名密码设置为password
+         password=password
          keytool -genkey -v -keystore keystore.jks -storepass $password -alias key -keypass $password -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android, OU=Android, O=Android, L=BeiJing, ST=BeiJing, C=CN"
          #启用谷歌v1 v2 v3 v4 签名方式同时签名
          /usr/local/lib/android/sdk/build-tools/34.0.0/apksigner sign --ks keystore.jks --ks-key-alias key --ks-pass pass:$password --key-pass pass:$password --out vntApp-android.apk --in app-release.apk --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --v4-signing-enabled true
