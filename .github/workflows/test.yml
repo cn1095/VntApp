@@ -185,14 +185,14 @@ jobs:
          cat ./lib/about_page.dart
          sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
          sed -i "s|1.7.10|1.9.0|" ./android/settings.gradle
-         sed -i 's|7.6.3|8.0|' ./android/gradle/wrapper/gradle-wrapper.properties
+         sed -i 's|7.6.3|8.0.2|' ./android/gradle/wrapper/gradle-wrapper.properties
          sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
          sed -i 's|19|21|' ./rust_builder/android/build.gradle
          sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
          sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
          echo '
           buildscript {
-            ext.kotlin_version = "1.9.0"  
+            ext.kotlin_version = "1.8.10"  
             repositories {
               google()
               mavenCentral()
