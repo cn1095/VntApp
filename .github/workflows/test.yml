@@ -114,6 +114,7 @@ jobs:
         if: ${{ startsWith(matrix.target, 'Windows') }}
         shell: bash
         run: |
+          exit 1
           git clone https://github.com/vnt-dev/VntApp -b flutter C:/vnt
           cd C:/vnt
           rm -f C:/vnt/rust/Cargo.lock
@@ -132,7 +133,7 @@ jobs:
 
           
       - name: 构建安卓so库
-        if: ${{ startsWith(matrix.target, 'Android') }}
+        if: ${{ startsWith(matrix.target, 'Androi') }}
         run: |
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
@@ -180,16 +181,17 @@ jobs:
       - name: 构建安卓APK
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
+         git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
          cd /opt/vnt
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
          cat ./lib/about_page.dart
          sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
          sed -i "s|1.7.10|1.9.0|" ./android/settings.gradle
-         sed -i 's|7.6.3|8.0.2|' ./android/gradle/wrapper/gradle-wrapper.properties
+         sed -i 's|7.6.3|8.1|' ./android/gradle/wrapper/gradle-wrapper.properties
          sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
          sed -i 's|19|21|' ./rust_builder/android/build.gradle
-         sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
-         sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
+         sed -i 's|flutter.compileSdkVersion|33|' ./android/app/build.gradle
+         sed -i 's|flutter.targetSdkVersion|33|' ./android/app/build.gradle
          echo '
           buildscript {
             ext.kotlin_version = "1.8.10"  
