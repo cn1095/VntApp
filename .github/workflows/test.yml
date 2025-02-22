@@ -207,7 +207,7 @@ jobs:
           
          flutter pub get
          flutter upgrade
-         flutter build apk --release
+         flutter build apk --release -v
          find /opt/vnt -type f -name "*.apk"
          mkdir -p /opt/vntAPP
          mv -f /opt/vnt/build/app/outputs/flutter-apk/app-release.apk /opt/vntAPP/app-release.apk
