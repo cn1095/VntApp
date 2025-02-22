@@ -126,7 +126,8 @@ jobs:
           ls -l "C:/vnt/build/windows/x64/runner/Release"
           cd C:/vnt/build/windows/x64/runner/Release
           mkdir -p C:/opt/upx
-          tar -cvf C:/opt/upx/Windows-VntAPP.tar *
+          "C:\Program Files\7-Zip\7z.exe" a C:/opt/upx/Windows-VntAPP.zip C:/vnt/build/windows/x64/runner/Release/*
+
           
       - name: 构建安卓so库
         if: ${{ startsWith(matrix.target, 'Android') }}
