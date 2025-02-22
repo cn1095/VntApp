@@ -125,6 +125,7 @@ jobs:
           echo "构建完成，开始列出生成的文件"
           ls -l "C:/vnt/build/windows/x64/runner/Release"
           cd C:/vnt/build/windows/x64/runner/Release
+          mkdir -p /opt/upx
           tar -cvf /opt/upx/Windows-VntAPP.tar *
           
       - name: 构建安卓so库
@@ -133,6 +134,7 @@ jobs:
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
            rm -rf .cargo/config Cargo.lock
+           sed -i 's|branch = "1.2.x"|rev = "501a9e8"|' Cargo.toml
            export PATH=/opt/ndk/android-ndk-r26d:/opt/ndk/android-ndk-r26d/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH  
            cat >>./.cargo/config <<EOF
             [target.armv7-linux-androideabi]
@@ -174,7 +176,9 @@ jobs:
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
          cd /opt/vnt
-
+         sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
+         cat ./lib/about_page.dart
+         sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
          sed -i 's|7.6.3|8.0|' ./android/gradle/wrapper/gradle-wrapper.properties
          sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
          sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
