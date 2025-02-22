@@ -113,13 +113,19 @@ jobs:
         run: |
           git clone https://github.com/vnt-dev/VntApp -b flutter C:/vnt
           cd C:/vnt
-          rm -f C:\vnt\rust\Cargo.lock
-          
+          rm -f C:/vnt/rust/Cargo.lock
+          sed -i 's/1\.2\.x/${{ github.event.inputs.repo }}/g' C:/vnt/rust/Cargo.toml
+          cat C:/vnt/rust/Cargo.toml
+          sed -i 's/1\.2\.11-预发布版/${{ needs.check.outputs.ver }}/g' C:/vnt/lib/about_page.dart
+          cat C:/vnt/lib/about_page.dart
           flutter pub get
           flutter upgrade
           flutter build windows --release
           echo "构建完成，开始列出生成的文件"
           ls -l "C:/vnt/build/windows/x64/runner/Release"
+          cd C:/vnt/build/windows/x64/runner/Release
+          tar -cvf /opt/upx/Windows-VntAPP.tar *
+          
       - name: 构建安卓so库
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
