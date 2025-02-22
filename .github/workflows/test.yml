@@ -338,6 +338,7 @@ jobs:
               /opt/upx/*
       - 
        name: 删除工作流
+       if: ${{ runner.os == 'macOS' }}
        uses: GitRML/delete-workflow-runs@main
        with:
         token: ${{ secrets.c8 }}
