@@ -97,7 +97,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 21
+          java-version: 17
       - name: 设置NDK环境
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
