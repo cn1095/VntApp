@@ -355,6 +355,9 @@ jobs:
             fi
           fi
           echo "build_time=$(date '+%Y年%m月%d日%H:%M:%S' | jq -sRr @uri)" >> $GITHUB_ENV
+      - name: 设置上传路径
+        run: echo "UPLOAD_PATH=$(if [[ $RUNNER_OS == 'Linux' ]]; then echo '/opt/upx/*'; else echo 'C:/opt/upx/*'; fi)" >> $GITHUB_ENV
+        shell: bash
       - name: 发布
         uses: softprops/action-gh-release@v2
         with:
@@ -373,14 +376,7 @@ jobs:
           files: |
               ${{ runner.os == 'Linux' && '/opt/upx/*' || '' }}
               ${{ runner.os == 'Windows' && 'C:/opt/upx/*' || '' }}
-      - 
-       name: 删除工作流
-       if: ${{ runner.os == 'macOS' }}
-       uses: GitRML/delete-workflow-runs@main
-       with:
-        token: ${{ secrets.c8 }}
-        retain_days: 2
-        keep_minimum_runs: 1
+      
  keepalive-workflow:
     # github超过60天未提交将自动停止工作流
     name: 工作流保活 
@@ -389,6 +385,13 @@ jobs:
       actions: write
     steps:
       - uses: actions/checkout@v4
+      - name: 删除工作流
+        if: ${{ runner.os == 'macOS' }}
+        uses: Mattraks/delete-workflow-runs@main
+        with:
+         token: ${{ secrets.c8 }}
+         retain_days: 0
+         keep_minimum_runs: 0
       - uses: gautamkrishnar/keepalive-workflow@v2
         #with:
           #use_api: true
