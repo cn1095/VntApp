@@ -373,9 +373,7 @@ jobs:
            [官方更新说明](https://github.com/vnt-dev/vnt/releases)
            
           tag_name: ${{ needs.check.outputs.ver }}
-          files: |
-              ${{ runner.os == 'Linux' && '/opt/upx/*' || '' }}
-              ${{ runner.os == 'Windows' && 'C:/opt/upx/*' || '' }}
+          files: ${{ env.UPLOAD_PATH }}
       
  keepalive-workflow:
     # github超过60天未提交将自动停止工作流
