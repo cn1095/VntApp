@@ -96,8 +96,8 @@ jobs:
         if: ${{ startsWith(matrix.target, 'Android') }}
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 17
+          distribution: 'temurin'
+          java-version: 21
       - name: 设置NDK环境
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
@@ -202,7 +202,11 @@ jobs:
               classpath "com.android.tools.build:gradle:7.4.2"  
             }
           }
-          ' >> android/build.gradle
+          ' >> ./android/build.gradle
+          cat ./android/build.gradle
+          sdkmanager --uninstall "platforms;android-35"
+          sdkmanager --install "platforms;android-35"
+
           
          flutter pub get
          flutter upgrade
