@@ -125,8 +125,8 @@ jobs:
           echo "构建完成，开始列出生成的文件"
           ls -l "C:/vnt/build/windows/x64/runner/Release"
           cd C:/vnt/build/windows/x64/runner/Release
-          mkdir -p /opt/upx
-          tar -cvf /opt/upx/Windows-VntAPP.tar *
+          mkdir -p C:/opt/upx
+          tar -cvf C:/opt/upx/Windows-VntAPP.tar *
           
       - name: 构建安卓so库
         if: ${{ startsWith(matrix.target, 'Android') }}
@@ -368,7 +368,8 @@ jobs:
            
           tag_name: ${{ needs.check.outputs.ver }}
           files: |
-              /opt/upx/*
+              ${{ runner.os == 'Linux' && '/opt/upx/*' || '' }}
+              ${{ runner.os == 'Windows' && 'C:/opt/upx/*' || '' }}
       - 
        name: 删除工作流
        if: ${{ runner.os == 'macOS' }}
