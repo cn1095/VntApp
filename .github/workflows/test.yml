@@ -209,6 +209,7 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
+          export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
           sdkmanager "platforms;android-34" "build-tools;34.0.0"
           sdkmanager --uninstall "platforms;android-35" "build-tools;35.0.1"
           export ANDROID_HOME=/usr/local/lib/android/sdk
@@ -216,7 +217,7 @@ jobs:
           export PATH=$ANDROID_HOME/platforms/android-34:$PATH
           sudo apt install ninja-build libgtk-3-dev
 
-          #export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
+          
           #sdkmanager "platforms;android-35"
          echo "开始构建"
           flutter doctor -v
