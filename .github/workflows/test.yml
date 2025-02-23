@@ -205,7 +205,7 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
-          find /usr/local/lib/android/sdk -name "sdkmanager"
+          export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
           sdkmanager "platforms;android-35"
          flutter pub get
          flutter upgrade
