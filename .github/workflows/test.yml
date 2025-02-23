@@ -134,7 +134,7 @@ jobs:
 
           
       - name: 构建安卓so库
-        if: ${{ startsWith(matrix.target, 'Android') }}
+        if: ${{ startsWith(matrix.target, 'TESTAndroid') }}
         run: |
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
@@ -182,6 +182,7 @@ jobs:
       - name: 构建安卓APK
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
+         git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
          cd /opt/vnt
          rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
@@ -205,10 +206,10 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
-          export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
-          sdkmanager "platforms;android-35"
+          #export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
+          #sdkmanager "platforms;android-35"
          flutter pub get
-         flutter upgrade
+         #flutter upgrade
          flutter build apk --release -v
          find /opt/vnt -type f -name "*.apk"
          mkdir -p /opt/vntAPP
