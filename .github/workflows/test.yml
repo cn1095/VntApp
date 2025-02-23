@@ -195,7 +195,8 @@ jobs:
          #rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
          #rm -rf /usr/local/lib/android/sdk/build-tools/35.0.0 || true
          #rm -rf /usr/local/lib/android/sdk/build-tools/35.0.1 || true
-         #export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
+         export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
+         sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
          #sdkmanager "platforms;android-34" "build-tools;34.0.0" || true
          #sdkmanager --uninstall "platforms;android-35" "build-tools;35.0.0" "build-tools;35.0.1" "platforms;android-35-ext14" || true
          #export ANDROID_HOME=/usr/local/lib/android/sdk
@@ -225,7 +226,7 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
-          
+         echo "android.enableAapt2=false" >> android/gradle.properties
          echo "开始构建"
          flutter clean
          flutter doctor -v
