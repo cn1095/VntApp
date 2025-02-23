@@ -212,6 +212,7 @@ jobs:
           #export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
           #sdkmanager "platforms;android-35"
          flutter pub get
+         flutter pub upgrade
          #flutter upgrade
          flutter build apk --release -v
          find /opt/vnt -type f -name "*.apk"
