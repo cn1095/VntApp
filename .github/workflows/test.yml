@@ -185,6 +185,8 @@ jobs:
          git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
          cd /opt/vnt
          sed -i 's|branch = "1.2.x"|rev = "501a9e8"|' rust/Cargo.toml
+         sed -i '0,/local_ipv4,/s/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/' rust/src/api/vnt_api.rs
+           sed -i '/ErrorType::Unknown => RustErrorType::Unknown,/a\    _ => RustErrorType::Unknown,' rust/src/api/vnt_api.rs
          rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
          sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
