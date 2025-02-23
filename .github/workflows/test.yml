@@ -205,7 +205,8 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
-          
+          find /usr/local/lib/android/sdk -name "sdkmanager"
+          sdkmanager "platforms;android-35"
          flutter pub get
          flutter upgrade
          flutter build apk --release -v
