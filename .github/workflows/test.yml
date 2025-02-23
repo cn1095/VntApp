@@ -136,7 +136,7 @@ jobs:
 
           
       - name: 构建安卓so库
-        if: ${{ startsWith(matrix.target, 'Android') }}
+        if: ${{ startsWith(matrix.target, 'TESTAndroid') }}
         run: |
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
@@ -186,18 +186,21 @@ jobs:
       - name: 构建安卓APK
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
+         git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
          cd /opt/vnt
-         
+         sed -i 's|branch = "1.2.x"|rev = "501a9e8"|' rust/Cargo.toml
+         sed -i '0,/local_ipv4,/s/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/' rust/src/api/vnt_api.rs
+         sed -i '/ErrorType::Unknown => RustErrorType::Unknown,/a\    _ => RustErrorType::Unknown,' rust/src/api/vnt_api.rs
          sudo apt install ninja-build libgtk-3-dev
-         rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
-         rm -rf /usr/local/lib/android/sdk/build-tools/35.0.0 || true
-         rm -rf /usr/local/lib/android/sdk/build-tools/35.0.1 || true
-         export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
-         sdkmanager "platforms;android-34" "build-tools;34.0.0" || true
-         sdkmanager --uninstall "platforms;android-35" "build-tools;35.0.0" "build-tools;35.0.1" "platforms;android-35-ext14" || true
-         export ANDROID_HOME=/usr/local/lib/android/sdk
-         export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
-         export PATH=$ANDROID_HOME/platforms/android-34:$PATH
+         #rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
+         #rm -rf /usr/local/lib/android/sdk/build-tools/35.0.0 || true
+         #rm -rf /usr/local/lib/android/sdk/build-tools/35.0.1 || true
+         #export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
+         #sdkmanager "platforms;android-34" "build-tools;34.0.0" || true
+         #sdkmanager --uninstall "platforms;android-35" "build-tools;35.0.0" "build-tools;35.0.1" "platforms;android-35-ext14" || true
+         #export ANDROID_HOME=/usr/local/lib/android/sdk
+         #export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
+         #export PATH=$ANDROID_HOME/platforms/android-34:$PATH
           
           
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
@@ -207,8 +210,8 @@ jobs:
          sed -i 's|7.6.3|8.1.1|' ./android/gradle/wrapper/gradle-wrapper.properties
          sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
          sed -i 's|19|21|' ./rust_builder/android/build.gradle
-         sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
-         sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
+         sed -i 's|flutter.compileSdkVersion|35|' ./android/app/build.gradle
+         sed -i 's|flutter.targetSdkVersion|35|' ./android/app/build.gradle
          echo '
           buildscript {
             ext.kotlin_version = "1.9.0"  
