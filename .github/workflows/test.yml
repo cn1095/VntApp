@@ -115,11 +115,12 @@ jobs:
         if: ${{ startsWith(matrix.target, 'Windows') }}
         shell: bash
         run: |
-          exit 1
           git clone https://github.com/vnt-dev/VntApp -b flutter C:/vnt
           cd C:/vnt
           rm -f C:/vnt/rust/Cargo.lock
+          #修改vnt-cli核心源码版本
           #sed -i 's/1\.2\.x/main/g' C:/vnt/rust/Cargo.toml
+          #修改APP内版本号
           sed -i 's/1\.2\.11-预发布版/${{ needs.check.outputs.ver }}/g' C:/vnt/lib/about_page.dart
           
           sed -i '0,/local_ipv4,/s/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/' C:/vnt/rust/src/api/vnt_api.rs
@@ -136,11 +137,12 @@ jobs:
 
           
       - name: 构建安卓so库
-        if: ${{ startsWith(matrix.target, 'TESTAndroid') }}
+        if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
            git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
            cd /opt/vnt/rust
            rm -rf .cargo/config Cargo.lock
+           #修改vnt-cli核心源码的版本
            sed -i 's|branch = "1.2.x"|rev = "501a9e8"|' Cargo.toml
            
            sed -i '0,/local_ipv4,/s/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/' ./src/api/vnt_api.rs
@@ -186,15 +188,14 @@ jobs:
       - name: 构建安卓APK
         if: ${{ startsWith(matrix.target, 'Android') }}
         run: |
-         git clone https://github.com/vnt-dev/VntApp -b flutter /opt/vnt
          cd /opt/vnt
-         sed -i 's|branch = "1.2.x"|rev = "501a9e8"|' rust/Cargo.toml
-         sed -i '0,/local_ipv4,/s/local_ipv4,/local_ipv4.map(|ip| ip.to_string()),/' rust/src/api/vnt_api.rs
-         sed -i '/ErrorType::Unknown => RustErrorType::Unknown,/a\    _ => RustErrorType::Unknown,' rust/src/api/vnt_api.rs
+         
          sudo apt install ninja-build libgtk-3-dev
+         #删除android-35
          #rm -rf /usr/local/lib/android/sdk/platforms/android-35 || true
          #rm -rf /usr/local/lib/android/sdk/build-tools/35.0.0 || true
          #rm -rf /usr/local/lib/android/sdk/build-tools/35.0.1 || true
+         #设置路径安装特地版本tool
          export PATH=$PATH:/usr/local/lib/android/sdk/cmdline-tools/latest/bin
          sdkmanager "platforms;android-35" "build-tools;35.0.0" || true
          #sdkmanager "platforms;android-34" "build-tools;34.0.0" || true
@@ -203,10 +204,11 @@ jobs:
          #export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
          #export PATH=$ANDROID_HOME/platforms/android-34:$PATH
           
-          
+         #修改APP内版本
          sed -i "s/1.2.11-预发布版/${{ needs.check.outputs.ver }}/g" ./lib/about_page.dart
          sed -i "s|1.2.13|${{ needs.check.outputs.ver }}|" ./android/app/build.gradle
-         
+
+         #跟随flutter版本依赖版本的更新迭代版本也相应升级
          sed -i "s|1.7.10|1.9.0|" ./android/settings.gradle
          sed -i "s|7.3.0|8.1.0|" ./android/settings.gradle
          sed -i 's|7.6.3|8.1.1|' ./android/gradle/wrapper/gradle-wrapper.properties
@@ -240,7 +242,7 @@ jobs:
          mv -f /opt/vnt/build/app/outputs/flutter-apk/app-release.apk /opt/vntAPP/app-release.apk
          
          cd /opt/vntAPP
-         #生成签名文件keystore.jks 签名密码设置为password
+         #生成签名文件keystore.jks 签名密码设置为password 可以自定义修改密码
          password=password
          keytool -genkey -v -keystore keystore.jks -storepass $password -alias key -keypass $password -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android, OU=Android, O=Android, L=BeiJing, ST=BeiJing, C=CN"
          #启用谷歌v1 v2 v3 v4 签名方式同时签名
@@ -430,10 +432,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: 删除工作流
-        if: ${{ runner.os == 'macOS' }}
         uses: Mattraks/delete-workflow-runs@main
         with:
-         token: ${{ secrets.GIT }}
+         token: ${{ secrets.GITHUB_TOKEN }}
          retain_days: 0
          keep_minimum_runs: 0
       - uses: gautamkrishnar/keepalive-workflow@v2
