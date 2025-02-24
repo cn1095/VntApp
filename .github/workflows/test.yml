@@ -51,7 +51,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.24.0
+          flutter-version: 3.22.0
       - name: 设置JDK环境
         if: ${{ startsWith(matrix.target, 'Android') }}
         uses: actions/setup-java@v4
@@ -127,6 +127,10 @@ jobs:
          sed -i 's|flutter.minSdkVersion|19|' ./android/app/build.gradle
          echo '
           buildscript {
+            repositories {
+              google()
+              mavenCentral()
+            }
             dependencies {
               classpath "com.android.tools.build:gradle:7.3.0"  
             }
