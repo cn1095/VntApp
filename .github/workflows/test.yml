@@ -124,7 +124,7 @@ jobs:
          #sed -i 's|19|21|' ./rust_builder/android/build.gradle
          sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
          sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
-         sed -i 's|flutter.minSdkVersion|19|' ./android/app/build.gradle
+         sed -i 's|flutter.minSdkVersion|21|' ./android/app/build.gradle
          echo '
           buildscript {
             repositories {
