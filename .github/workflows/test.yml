@@ -51,7 +51,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          #flutter-version: 3.27.4
+          flutter-version: 3.24.0
       - name: 设置JDK环境
         if: ${{ startsWith(matrix.target, 'Android') }}
         uses: actions/setup-java@v4
@@ -124,6 +124,7 @@ jobs:
          #sed -i 's|19|21|' ./rust_builder/android/build.gradle
          sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
          sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
+         sed -i 's|flutter.minSdkVersion|19|' ./android/app/build.gradle
          echo '
           buildscript {
             dependencies {
@@ -131,12 +132,12 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
-          
+          sed -i 's|android.useAndroidX=true|android.overrideSdkCheck=true|' ./android/gradle.properties
          echo "开始构建"
          flutter clean
          flutter doctor -v
          flutter pub get
-         flutter pub upgrade --no-upgrade
+         #flutter pub upgrade 
          flutter build apk --release -v
          find /opt/vnt -type f -name "*.apk"
          
