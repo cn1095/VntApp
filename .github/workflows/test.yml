@@ -136,7 +136,6 @@ jobs:
             }
           }
           ' >> ./android/build.gradle
-          sed -i 's|android.useAndroidX=true|android.overrideSdkCheck=true|' ./android/gradle.properties
          echo "开始构建"
          flutter clean
          flutter doctor -v
