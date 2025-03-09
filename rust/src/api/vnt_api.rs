@@ -127,8 +127,8 @@ impl VntApi {
             Ok(compressor) => compressor,
             Err(e) => Err(anyhow!("{:?}", e))?,
         };
-        let local_ipv4: Option<String> = if let Some(local_ipv4) = vnt_config.local_ipv4 {
-            Some(local_ipv4.parse::<Ipv4Addr>().context("localIP")?.to_string())
+        let local_ipv4:Option<Ipv4Addr> = if let Some(local_ipv4) = vnt_config.local_ipv4{
+            Some(local_ipv4.parse().context("localIP")?)
         }else{
             None
         };
@@ -162,7 +162,7 @@ impl VntApi {
             compressor,
             true,
             vnt_config.allow_wire_guard,
-            local_ipv4,
+            local_ipv4.map(|ip| ip.to_string()),
         )?;
         Ok(Self {
             vnt: Vnt::new(conf, call)?,
