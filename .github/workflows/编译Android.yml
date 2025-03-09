@@ -105,13 +105,14 @@ jobs:
         run: |
          cd /opt/vnt
 
-         sed -i 's|7.6.3|8.0|' ./android/gradle/wrapper/gradle-wrapper.properties
-         sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
-         sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
-         sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
-
+         #sed -i 's|7.6.3|8.0|' ./android/gradle/wrapper/gradle-wrapper.properties
+         #sed -i 's|7.3|8.1|' ./rust_builder/android/build.gradle
+         #sed -i 's|flutter.compileSdkVersion|34|' ./android/app/build.gradle
+         #sed -i 's|flutter.targetSdkVersion|34|' ./android/app/build.gradle
+         sed -i 's|1.2.16|Location|' ./rust/Cargo.toml
+         
          flutter pub get
-         flutter upgrade
+         #flutter upgrade
          flutter build apk --release
          find /opt/vnt -type f -name "*.apk"
          mkdir -p /opt/vntAPP
