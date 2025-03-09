@@ -25,7 +25,8 @@ jobs:
       - name: 设置Flutter环境
         uses: subosito/flutter-action@v2
         with:
-          channel: stable  
+          channel: stable
+          flutter-version: 3.22.0  
           
       - name: 克隆源码
         run: git clone -b "${{ env.tag }}" "https://github.com/${{ env.repo }}" C:\vnt
