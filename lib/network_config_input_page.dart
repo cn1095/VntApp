@@ -341,7 +341,7 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                 CustomTooltipTextField(
                   controller: _serverAddressController,
                   labelText: '服务器地址',
-                  tooltipMessage: '(VNTS地址,udp和tcp模式可以使用txt:前缀启用TXT记录解析)',
+                  tooltipMessage: '(VNTS地址,使用http:前缀启用302重定向解析,udp和tcp模式使用txt:前缀则启用TXT记录解析)',
                   maxLength: 64,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
