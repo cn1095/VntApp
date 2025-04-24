@@ -1,0 +1,79 @@
+## https://github.com/rustdesk/engine/blob/main/.github/workflows/flutter-engine-windows-x64-release-build.yml
+## https://rustdesk.com/blog/2024/12/how-to-make-flutter-3-24-run-on-windows-7/
+## https://github.com/rustdesk/rustdesk/blob/5c2538e7af2c2fba3a0cd6acffc75ef52c5bd734/.github/workflows/flutter-build.yml#L112
+name: Build Flutter Engine
+
+on: workflow_dispatch
+
+jobs:
+  build-engine:
+    runs-on: windows-2019
+
+    steps:
+      - name: Install Depot Tools
+        uses: newkdev/setup-depot-tools@v1.0.1
+
+      - name: Set environment variables
+        run: |
+          echo "DEPOT_TOOLS_WIN_TOOLCHAIN=0" >> $env:GITHUB_ENV
+          echo "GYP_MSVS_OVERRIDE_PATH=C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise" >> $env:GITHUB_ENV
+          echo "WINDOWSSDKDIR=C:\Program Files (x86)\Windows Kits\10" >> $env:GITHUB_ENV
+
+      - name: Fetch Flutter
+        run: |
+          mkdir engine
+          cd engine
+          
+          fetch flutter
+          git -C src/flutter checkout 3.24.5
+
+          $filePath = "src/flutter/shell/platform/windows/flutter_windows_engine.cc"
+          (Get-Content $filePath) -replace 'ClearCurrent', 'MakeCurrent' | Set-Content $filePath
+
+          $filePath = "src/flutter/fml/hex_codec.h"
+          (Get-Content $filePath | ForEach-Object { if ($_ -eq '#include <string_view>') {"#include <string>`n" + $_} else {$_}}) | Set-Content $filePath
+
+          git -C src/flutter status
+          
+          gclient sync -D
+
+          # fix https://github.com/rustdesk/rustdesk/issues/10085
+          $filePath = "revert_to_gethostname.zip"
+          Invoke-WebRequest -Uri "https://dart-review.googlesource.com/changes/sdk~320620/revisions/2/patch?zip&path=runtime%2Fbin%2Fplatform_win.cc" -OutFile $filePath
+          Expand-Archive -Path $filePath -DestinationPath "."
+          git apply --directory="src/flutter/third_party/dart" 987dbe0.diff
+
+          # fix https://github.com/dart-lang/sdk/commit/34213ba60578e46fc2455c5a56b09d9efabc532b#diff-8b21f02c32c6647079e2c07e7c6ddfff74ac69f81331f9ed67429125e9fe16aa
+          $filePath = "0001-Revert-win-unwinding-Remove-Windows7-handling-of-unw.patch"
+          Invoke-WebRequest -Uri "https://github.com/rustdesk/engine/raw/refs/heads/main/0001-Revert-win-unwinding-Remove-Windows7-handling-of-unw.patch" -OutFile $filePath
+          git apply --directory="src/flutter/third_party/dart" $filePath
+
+          # fix https://dart-review.googlesource.com/c/sdk/+/335940/22/runtime/bin/file_win.cc#642
+          $filePath = "0001-revert-file_win.cc.patch"
+          Invoke-WebRequest -Uri "https://github.com/rustdesk/engine/raw/refs/heads/main/0001-revert-file_win.cc.patch" -OutFile $filePath
+          git apply --directory="src/flutter/third_party/dart" $filePath
+          
+          # Compiling the Flutter engine
+          cd src
+          python .\flutter\tools\gn --runtime-mode=release --no-prebuilt-dart-sdk
+          ninja -C .\out\host_release
+          
+          # Check and compress files
+          $outputPath = "${{ github.workspace }}\windows-x64-release.zip"
+          $filesToCompress = Get-ChildItem -Path .\out\host_release\ | Where-Object { $_.Name -in @("flutter_windows.dll", "flutter_windows.dll.pdb", "flutter_windows.dll.exp", "flutter_windows.dll.lib", "flutter_windows.h", "flutter_export.h", "flutter_messenger.h", "flutter_plugin_registrar.h", "flutter_texture_registrar.h", "license.windows_flutter.md", "gen_snapshot.exe") }
+          $filesToCompressPaths = $filesToCompress.FullName
+          if ($filesToCompressPaths) {
+            Compress-Archive -Path $filesToCompressPaths -DestinationPath $outputPath
+          } else {
+            Write-Error "Build output files not found!"
+          }
+
+      # The file will be uploaded to the release page of the repository, and the tag is the branch name of the currently executing workflow.
+      - name: Upload files to a GitHub release
+        uses: svenstaro/upload-release-action@2.9.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: windows-x64-release.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Flutter Engine Release"
