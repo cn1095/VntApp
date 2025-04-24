@@ -68,7 +68,7 @@ jobs:
           cd C:\vnt
           flutter pub get
           #flutter upgrade
-          flutter build windows --release
+          flutter build windows --release -v
           echo "构建完成，开始列出生成的文件"
           dir C:\vnt\build\windows\x64\runner\Release
           
