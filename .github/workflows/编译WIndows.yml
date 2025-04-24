@@ -17,6 +17,7 @@ env:
   TZ: Asia/Shanghai
   repo: "${{ github.event.inputs.repo }}"
   tag: "${{ github.event.inputs.tag }}"
+  FLUTTER_VERSION: 3.24.5
 
 jobs:
   build:
@@ -26,13 +27,43 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: 3.22.0  
+          flutter-version: ${{ env.FLUTTER_VERSION }} 
           
+      - name: 替换 Flutter 引擎为支持 Windows 7 的版本
+        shell: pwsh
+        run: |
+          flutter doctor -v
+          flutter precache --windows
+          Invoke-WebRequest -Uri https://github.com/lmq8267/Toolchain/releases/download/flutter-3.24.5/windows-x64-release.zip -OutFile windows-x64-release.zip
+          Expand-Archive -Path windows-x64-release.zip -DestinationPath windows-x64-release
+          Copy-Item -Path windows-x64-release/* -Destination "C:/hostedtoolcache/windows/flutter/stable-${{ env.FLUTTER_VERSION }}-x64/bin/cache/artifacts/engine/windows-x64-release/" -Recurse -Force
+
+      - name: 打补丁以启用 Dropdown Menu 过滤支持
+        shell: bash
+        run: |
+          cp .github/patches/flutter_3.24.4_dropdown_menu_enableFilter.diff $(dirname $(dirname $(which flutter)))
+          cd $(dirname $(dirname $(which flutter)))
+          [[ "${{ env.FLUTTER_VERSION }}" == "3.24.5" ]] && git apply flutter_3.24.4_dropdown_menu_enableFilter.diff || true
+
       - name: 克隆源码
         run: git clone -b "${{ env.tag }}" "https://github.com/${{ env.repo }}" C:\vnt
 
+      - name: 安装 Rust 和设置 toolchain
+        run: |
+          rustup set auto-self-update disable
+          rustup install 1.77
+          rustup default 1.77
+          rustc --version
+          
       - name: 构建 Windows vntAPP
         run: |
+          set WINVER=0x0601
+          set "CFLAGS=-D_WIN32_WINNT=0x0601 -static -static-libgcc -static-libstdc++"
+          set "CXXFLAGS=-D_WIN32_WINNT=0x0601 -static -static-libgcc -static-libstdc++"
+          setx CARGO_TERM_VERBOSE true
+          set CARGO_TERM_VERBOSE=true
+          set VERBOSE_SCRIPT=true
+          
           cd C:\vnt
           flutter pub get
           #flutter upgrade
