@@ -666,7 +666,7 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                       ),
                       _buildRadioGroup(
                         '路径模式',
-                        [('P2P优先-客户端直接直连', 'P2P'), ('低延迟优先-可能经过服务器转发', 'LOW_LATENCY')],
+                        [('P2P优先-表示客户端直连优先', 'P2P'), ('低延迟优先-可能经过服务器转发', 'LOW_LATENCY')],
                         _routingMode,
                         (value) {
                           setState(() {
