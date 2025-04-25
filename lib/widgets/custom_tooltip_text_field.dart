@@ -17,7 +17,7 @@ class CustomTooltipTextField extends StatefulWidget {
     this.maxLength = 32,
     this.validator,
     this.suffixIcon,
-    this.obscureText = flase,
+    this.obscureText = false,
   });
 
   @override
