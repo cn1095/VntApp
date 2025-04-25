@@ -409,106 +409,112 @@ class _HomePageState extends State<HomePage> with WindowListener {
     await _connectVnt(config);
   }
 
-  Future<void> _connectVnt(NetworkConfig config) async {
-    var onece = true;
-    ReceivePort receivePort = ReceivePort();
-    var itemKey = config.itemKey;
-    var configName = config.configName;
-    receivePort.listen((msg) async {
-      if (msg is String) {
-        if (msg == 'success') {
-          if (onece) {
-            onece = false;
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            connectDetailPage(config);
-          }
-        } else if (msg == 'stop') {
-          _closeVnt(itemKey);
-          if (onece) {
-            onece = false;
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('VNT服务停止[$configName]')),
-          );
-        }
-      } else if (msg is RustErrorInfo) {
-        if (onece) {
-          //没成功就失败的，就断开不重试了
-          onece = false;
+int _maxRetry = 3; // 最大重试次数
+Future<void> _connectVnt(NetworkConfig config, {int retryCount = 0}) async {
+  var once = true;
+  ReceivePort receivePort = ReceivePort();
+  var itemKey = config.itemKey;
+  var configName = config.configName;
+
+  receivePort.listen((msg) async {
+    if (msg is String) {
+      if (msg == 'success') {
+        if (once) {
+          once = false;
           Navigator.of(context).popUntil((route) => route.isFirst);
+          connectDetailPage(config);
+        }
+      } else if (msg == 'stop') {
+        if (retryCount < _maxRetry) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('正在重试第 ${retryCount + 1} 次连接 [$configName]...')),
+          );
+          await Future.delayed(Duration(seconds: 2)); // 可选：延迟重试
           _closeVnt(itemKey);
-        }
-        switch (msg.code) {
-          case RustErrorType.tokenError:
-            _closeVnt(itemKey);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('token错误[$configName]')),
-            );
-            break;
-          case RustErrorType.disconnect:
-            //断开连接
-            break;
-          case RustErrorType.addressExhausted:
-            _closeVnt(itemKey);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('IP地址用尽[$configName]')),
-            );
-            break;
-          case RustErrorType.ipAlreadyExists:
-            _closeVnt(itemKey);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('和其他设备的虚拟IP冲突[$configName]')),
-            );
-            break;
-          case RustErrorType.invalidIp:
-            _closeVnt(itemKey);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('虚拟IP地址无效[$configName]')),
-            );
-            break;
-          case RustErrorType.localIpExists:
-            _closeVnt(itemKey);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('虚拟IP地址和本地IP冲突[$configName]')),
-            );
-            break;
-          default:
-            _closeVnt(itemKey);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('未知错误 ${msg.msg} [$configName]')),
-            );
-        }
-      } else if (msg is RustConnectInfo) {
-        if (onece && msg.count > BigInt.from(60)) {
-          onece = false;
-          Navigator.of(context).pop();
+          _connectVnt(config, retryCount: retryCount + 1);
+        } else {
+          if (once) {
+            once = false;
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
           _closeVnt(itemKey);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('连接超时 ${msg.address} [$configName]')),
+            SnackBar(content: Text('VNT服务停止[$configName]，重试失败')),
           );
         }
       }
-    });
-    try {
-      await vntManager.create(config, receivePort.sendPort);
-    } catch (e) {
-      debugPrint('dart catch e: $e');
-      if (!mounted) return;
+    } else if (msg is RustErrorInfo) {
+      if (once) {
+        once = false;
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        _closeVnt(itemKey);
+      }
 
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      var msg = e.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text(
+      switch (msg.code) {
+        case RustErrorType.tokenError:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('token错误[$configName]')),
+          );
+          break;
+        case RustErrorType.disconnect:
+          break;
+        case RustErrorType.addressExhausted:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('IP地址用尽[$configName]')),
+          );
+          break;
+        case RustErrorType.ipAlreadyExists:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('虚拟IP冲突[$configName]')),
+          );
+          break;
+        case RustErrorType.invalidIp:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('无效虚拟IP[$configName]')),
+          );
+          break;
+        case RustErrorType.localIpExists:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('虚拟IP和本地IP冲突[$configName]')),
+          );
+          break;
+        default:
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('未知错误 ${msg.msg} [$configName]')),
+          );
+      }
+    } else if (msg is RustConnectInfo) {
+      if (once && msg.count > BigInt.from(60)) {
+        once = false;
+        Navigator.of(context).pop();
+        _closeVnt(itemKey);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('连接超时 ${msg.address} [$configName]')),
+        );
+      }
+    }
+  });
+
+  try {
+    await vntManager.create(config, receivePort.sendPort);
+  } catch (e) {
+    debugPrint('dart catch e: $e');
+    if (!mounted) return;
+
+    Navigator.of(context).popUntil((route) => route.isFirst);
+    var msg = e.toString();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
           '连接失败 $msg',
           textAlign: TextAlign.left,
           overflow: TextOverflow.ellipsis,
           maxLines: 6,
-        )),
-      );
-    }
+        ),
+      ),
+    );
   }
+}
 
   void connectDetailPage(NetworkConfig config) async {
     var vntBox = vntManager.get(config.itemKey);
