@@ -38,11 +38,12 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
   final _simulatedPacketLossRateController = TextEditingController();
   final _simulatedLatencyController = TextEditingController();
 
-  String _isServerEncrypted = 'OPEN';
+  String _isServerEncrypted = 'CLOSE';
   bool _isPasswordVisible = false;
+  bool _isTokenVisible = false;
   String _communicationMethod = 'UDP';
   String _dataFingerprintVerification = 'CLOSE';
-  String _encryptionAlgorithm = 'aes_gcm';
+  String _encryptionAlgorithm = 'xor';
   String _routingMode = 'P2P';
   String _builtInIpProxy = 'OPEN';
   bool _isMoreParametersVisible = false;
@@ -292,19 +293,30 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                 CustomTooltipTextField(
                   controller: _nameController,
                   labelText: '配置名称',
-                  tooltipMessage: '(方便区分不同配置项，可填任意字符)',
+                  tooltipMessage: '(方便在首页区分不同的组网配置选项，可填任意字符)',
                   maxLength: 10,
                 ),
                 const SizedBox(height: 20),
                 _buildSectionTitle('基本参数'),
                 CustomTooltipTextField(
                   controller: _groupNumberController,
-                  labelText: '组网编号',
-                  tooltipMessage: '(标识同一个虚拟网络)',
+                  labelText: '组网token',
+                  tooltipMessage: '(相同的token和服务器才能组建一个虚拟局域网)',
                   maxLength: 64,
+                  obscureText: !_isTokenVisible, // 控制是否隐藏文本
+                  suffixIcon: IconButton( // 可见性切换按钮
+                    icon: Icon(
+                      _isTokenVisible ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isTokenVisible = !_isTokenVisible;
+                      });
+                    },
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return '请输入组网编号';
+                      return '请输入token';
                     }
                     return null;
                   },
@@ -453,7 +465,7 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                 _buildDynamicTooltipFields(
                   'in-ip',
                   _inIps,
-                  '示例：192.168.0.1/24,10.26.0.10',
+                  '例如想要通过10.26.0.10去访问192.168.0.*网段内其他设备则填：192.168.0.1/24,10.26.0.10',
                   34,
                   IpUtils.parseInIpString,
                 ),
@@ -514,13 +526,13 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                 _buildDropdownField(
                   '加密算法',
                   [
-                    'aes_gcm',
+                    'xor',
                     'chacha20_poly1305',
                     'chacha20',
-                    'aes_cbc',
                     'aes_ecb',
+                    'aes_cbc',
                     'sm4_cbc',
-                    'xor'
+                    'aes_gcm'
                   ],
                   _encryptionAlgorithm,
                   (value) {
@@ -654,7 +666,7 @@ class _NetworkConfigInputPageState extends State<NetworkConfigInputPage> {
                       ),
                       _buildRadioGroup(
                         '路径模式',
-                        [('P2P优先', 'P2P'), ('低延迟优先', 'LOW_LATENCY')],
+                        [('P2P优先-客户端直接直连', 'P2P'), ('低延迟优先-可能经过服务器转发', 'LOW_LATENCY')],
                         _routingMode,
                         (value) {
                           setState(() {
