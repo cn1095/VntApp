@@ -13,7 +13,7 @@ use vnt::cipher::CipherModel;
 use vnt::compression::Compressor;
 use vnt::core::{Config, Vnt};
 use vnt::handle::{CurrentDeviceInfo, PeerDeviceInfo};
-#[cfg(target_os = "android")]
+#[cfg(any(target_os = "android", target_os = "ios"))]
 use vnt::DeviceConfig;
 #[cfg(any(target_os = "windows", target_os = "linux", target_os = "macos"))]
 use vnt::DeviceInfo;
@@ -55,7 +55,18 @@ pub fn init_log() {
             .with_tag("vnt_jni"), // logs will show under mytag tag
     );
 }
-#[cfg(not(target_os = "android"))]
+
+#[cfg(target_os = "ios")]
+pub fn init_log() {
+    // iOS 端使用 env_logger
+    use log::LevelFilter;
+    let _ = env_logger::builder()
+        .filter_level(LevelFilter::Debug)
+        .is_test(false)
+        .try_init();
+}
+
+#[cfg(all(not(target_os = "android"), not(target_os = "ios")))]
 pub fn init_log() {
     let rs = log4rs::init_file("logs/log4rs.yaml", Default::default());
     println!("log  {:?}", rs);
@@ -153,7 +164,7 @@ impl VntApi {
             punch_model,
             vnt_config.ports,
             vnt_config.first_latency,
-            #[cfg(not(target_os = "android"))]
+            #[cfg(all(not(target_os = "android"), not(target_os = "ios")))]
             vnt_config.device_name,
             use_channel_type,
             vnt_config.packet_loss_rate,
@@ -356,7 +367,7 @@ struct VntApiCallbackInner {
     connect_fn: Box<dyn Fn(RustConnectInfo) -> DartFnFuture<()> + Send + Sync + 'static>,
     handshake_fn: Box<dyn Fn(RustHandshakeInfo) -> DartFnFuture<bool> + Send + Sync + 'static>,
     register_fn: Box<dyn Fn(RustRegisterInfo) -> DartFnFuture<bool> + Send + Sync + 'static>,
-    // #[cfg(target_os = "android")]
+    // #[cfg(any(target_os = "android", target_os = "ios"))]
     generate_tun_fn: Box<dyn Fn(RustDeviceConfig) -> DartFnFuture<u32> + Send + Sync + 'static>,
     peer_client_list_fn:
         Box<dyn Fn(Vec<RustPeerClientInfo>) -> DartFnFuture<()> + Send + Sync + 'static>,
@@ -437,7 +448,7 @@ impl VntCallback for VntApiCallback {
             Runtime::new().unwrap().block_on(async { f(info).await })
         }
     }
-    #[cfg(target_os = "android")]
+    #[cfg(any(target_os = "android", target_os = "ios"))]
     fn generate_tun(&self, info: DeviceConfig) -> usize {
         let inner = self.inner.clone();
         let info = info.into();
@@ -579,7 +590,7 @@ pub struct RustDeviceConfig {
     pub external_route: Vec<(String, String)>,
 }
 
-#[cfg(target_os = "android")]
+#[cfg(any(target_os = "android", target_os = "ios"))]
 impl From<DeviceConfig> for RustDeviceConfig {
     fn from(value: DeviceConfig) -> Self {
         Self {
