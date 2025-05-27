@@ -48,3 +48,6 @@ linker = "D:/android/android-ndk-r26d-windows/android-ndk-r26d/toolchains/llvm/p
 [target.x86_64-linux-android]
 ar = "D:/android/android-ndk-r26d-windows/android-ndk-r26d/toolchains/llvm/prebuilt/windows-x86_64/bin/x86_64-linux-android-ar"
 linker = "D:/android/android-ndk-r26d-windows/android-ndk-r26d/toolchains/llvm/prebuilt/windows-x86_64/bin/x86_64-linux-android21-clang"
+
+[target.aarch64-apple-ios]
+rustflags = ["-C", "link-arg=-miphoneos-version-min=12.0"]
