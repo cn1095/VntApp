@@ -45,7 +45,7 @@ jobs:
           cd /opt/vnt
           flutter pub global activate flutter_distributor
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-          flutter_distributor release --platform linux --targets appimage
+          flutter_distributor release 
     
       - name : 上传
         uses: actions/upload-artifact@master
