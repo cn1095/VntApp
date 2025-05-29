@@ -38,11 +38,11 @@ jobs:
          flutter build linux --release -v
          
          #mkdir -p /opt/vntAPP
-         #mv -f /opt/vnt/build/linux/x64/release /opt/vntAPP/vntAPP-Linux-x86_64
+         #mv -f /opt/vnt/build/linux/x64/release/bundle /opt/vntAPP/vntAPP-Linux-x86_64
 
       - name : 上传
         uses: actions/upload-artifact@master
         if: always()
         with:
          name: vntAPP-Linux
-         path: /opt/vnt/build/linux/x64/release
+         path: /opt/vnt/build/linux/x64/release/bundle
