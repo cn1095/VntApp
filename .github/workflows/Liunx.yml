@@ -39,23 +39,10 @@ jobs:
          
          #mkdir -p /opt/vntAPP
          #mv -f /opt/vnt/build/linux/x64/release/bundle /opt/vntAPP/vntAPP-Linux-x86_64
-
-      - name: 打包 AppImage
-        env:
-          VERSION: 1.2.16
-        run: |
-          cd /opt/vnt
-          wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-          chmod +x appimagetool-x86_64.AppImage
-          mkdir -p ./vntAPP/usr/bin
-          cp -r ./build/linux/x64/release/bundle/* ./vntAPP/usr/bin/
-          cp ./assets/app_icon.png ./vntAPP/
-          cp ./assets/vnt.desktop ./vntAPP/
-          ./appimagetool-x86_64.AppImage vntAPP
     
       - name : 上传
         uses: actions/upload-artifact@master
         if: always()
         with:
          name: vntAPP-Linux
-         path: /opt/vnt/*.AppImage
+         path: /opt/vnt/build/linux/x64/release/bundle/*
