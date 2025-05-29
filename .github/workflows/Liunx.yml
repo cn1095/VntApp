@@ -45,11 +45,11 @@ jobs:
           cd /opt/vnt
           flutter pub global activate flutter_distributor
           export PATH="$PATH":"$HOME/.pub-cache/bin"
-          flutter_distributor release 
+          flutter_distributor release -v
     
       - name : 上传
         uses: actions/upload-artifact@master
         if: always()
         with:
          name: vntAPP-Linux
-         path: /opt/vnt/dist/linux/appimage/*.AppImage
+         path: /opt/vnt/build/dist/linux/appimage/*.AppImage
