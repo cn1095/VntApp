@@ -1,9 +1,12 @@
-app_id: "top.wherewego.vnt_app"     # 必填，不能是 null
-name: "vnt_app"                     # 必填，不能是 null
-version: "1.2.16"                   # 必填，不能是 null
-platform: "linux"                  # 必填
-jobs:
-  - appimage
-targets:
-  appimage:
-    icon: "assets/app_icon.png"     # 可选，确保路径存在或删除这一行
+output: "build/dist"  # 必须添加的字段
+releases:
+  - name: linux
+    jobs:
+      - name: appimage
+        package:
+          app_id: "top.wherewego.vnt_app"  # 移动到package下
+          name: "vnt_app"                 # 移动到package下
+          version: "1.2.16"               # 移动到package下
+          platform: "linux"
+          target: "appimage"               # 必须添加的字段
+          icon: "assets/app_icon.png"      # 保持在这里
