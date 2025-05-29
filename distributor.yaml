@@ -1,7 +1,0 @@
-app_id: top.wherewego.vnt_app
-version: 1.2.16
-name: vnt_app
-package:
-  linux:
-    appimage:
-      icon: assets/app_icon.png
