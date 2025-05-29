@@ -9,4 +9,4 @@ jobs:
 
 targets:
   appimage:
-    icon: assets/app_icon.png
+    icon: assets/app_icon.png   # 确保该路径和文件存在，或者去掉这一行测试
