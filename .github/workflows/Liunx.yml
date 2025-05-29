@@ -32,7 +32,7 @@ jobs:
       - name: 安装 musl 并设置为默认编译器
         run: |
           sudo apt-get update
-          sudo apt-get install -y musl musl-tools musl-dev musl-gcc
+          sudo apt-get install -y musl musl-tools musl-dev 
           sudo update-alternatives --install /usr/bin/cc cc /usr/bin/musl-gcc 100
           sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/musl-gcc 100
     
