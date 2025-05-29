@@ -47,10 +47,10 @@ jobs:
           cd /opt/vnt
           wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
           chmod +x appimagetool-x86_64.AppImage
-          mkdir -p vntAPP/usr/bin
-          cp -r build/linux/x86_64/release/bundle/* vntAPP/usr/bin/
-          cp assets/app_icon.png vntAPP/
-          cp assets/vnt.desktop vntAPP/
+          mkdir -p ./vntAPP/usr/bin
+          cp -r ./build/linux/x64/release/bundle/* ./vntAPP/usr/bin/
+          cp ./assets/app_icon.png ./vntAPP/
+          cp ./assets/vnt.desktop ./vntAPP/
           ./appimagetool-x86_64.AppImage vntAPP
     
       - name : 上传
