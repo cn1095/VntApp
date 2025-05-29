@@ -36,35 +36,15 @@ jobs:
          sudo apt-get install -y libgtk-3-dev build-essential libayatana-appindicator3-dev --fix-missing
          flutter pub get
          flutter build linux --release -v
-         flutter pub global activate flutter_distributor
+         
          #mkdir -p /opt/vntAPP
          #mv -f /opt/vnt/build/linux/x64/release/bundle /opt/vntAPP/vntAPP-Linux-x86_64
 
       - name: 打包 AppImage
         run: |
           cd /opt/vnt
-          flutter_distributor release \
-            --options '{
-              "output": "build/dist",
-              "releases": [
-                {
-                  "name": "linux",
-                  "jobs": [
-                    {
-                      "name": "appimage",
-                      "package": {
-                        "app_id": "top.wherewego.vnt_app",
-                        "name": "vnt_app",
-                        "version": "1.2.16",
-                        "platform": "linux",
-                        "target": "appimage",
-                        "icon": "assets/app_icon.png"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }'
+          flutter pub global activate flutter_distributor
+          flutter_distributor release 
     
       - name : 上传
         uses: actions/upload-artifact@master
