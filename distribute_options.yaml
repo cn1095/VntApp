@@ -1,4 +1,4 @@
-output: "build/dist"  # 必须添加的字段
+output: "dist"  # 必须添加的字段
 releases:
   - name: linux
     jobs:
