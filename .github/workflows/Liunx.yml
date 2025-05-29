@@ -1,4 +1,4 @@
-name: vntapp-Android
+name: vntapp-Linux
 
 on:
    workflow_dispatch:
@@ -32,9 +32,9 @@ jobs:
       - name: 构建
         run: |
          cd /opt/vnt
-         
+         sudo apt-get install libgtk-3-dev
          flutter pub get
-         flutter build linux --release
+         flutter build linux --release -v
          
          #mkdir -p /opt/vntAPP
          #mv -f /opt/vnt/build/app/outputs/flutter-apk/app-release.apk /opt/vntAPP/vntAPP-Linux-x86_64
