@@ -1,0 +1,47 @@
+name: vntapp-Android
+
+on:
+   workflow_dispatch:
+    inputs:
+      repo:
+        description: '请输入vntAPP源码仓库'
+        required: true
+        default: 'cn1095/VntApp'
+      tag:
+        description: '请输入仓库分支或版本号'
+        required: true
+        default: 'Location'
+env:
+  CARGO_TERM_COLOR: always
+  TZ: Asia/Shanghai
+  repo: "${{ github.event.inputs.repo }}"
+  tag: "${{ github.event.inputs.tag }}"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 设置Flutter环境
+        uses: subosito/flutter-action@v2
+        with:
+         channel: stable
+         flutter-version: 3.22.0
+         
+      - name: 克隆源码
+        run: git clone -b "${{ env.tag }}" "https://github.com/${{ env.repo }}" /opt/vnt
+           
+      - name: 构建
+        run: |
+         cd /opt/vnt
+         
+         flutter pub get
+         flutter build linux --release
+         
+         #mkdir -p /opt/vntAPP
+         #mv -f /opt/vnt/build/app/outputs/flutter-apk/app-release.apk /opt/vntAPP/vntAPP-Linux-x86_64
+
+      - name : 上传
+        uses: actions/upload-artifact@master
+        if: always()
+        with:
+         name: vntAPP-Linux
+         path: /opt/vnt/build/app/outputs
