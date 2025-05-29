@@ -40,9 +40,16 @@ jobs:
          #mkdir -p /opt/vntAPP
          #mv -f /opt/vnt/build/linux/x64/release/bundle /opt/vntAPP/vntAPP-Linux-x86_64
 
+      - name: 打包 AppImage
+        run: |
+          cd /opt/vnt
+          flutter pub global activate flutter_distributor
+          export PATH="$PATH":"$HOME/.pub-cache/bin"
+          flutter_distributor release --platform linux --targets appimage
+    
       - name : 上传
         uses: actions/upload-artifact@master
         if: always()
         with:
          name: vntAPP-Linux
-         path: /opt/vnt/build/linux/x64/release/bundle
+         path: /opt/vnt/dist/linux/appimage/*.AppImage
