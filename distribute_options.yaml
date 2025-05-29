@@ -1,12 +1,9 @@
-app_id: top.wherewego.vnt_app
-name: vnt_app
-version: 1.2.16
-
-platform: linux
-
+app_id: "top.wherewego.vnt_app"     # 必填，不能是 null
+name: "vnt_app"                     # 必填，不能是 null
+version: "1.2.16"                   # 必填，不能是 null
+platform: "linux"                  # 必填
 jobs:
   - appimage
-
 targets:
   appimage:
-    icon: assets/app_icon.png   # 确保该路径和文件存在，或者去掉这一行测试
+    icon: "assets/app_icon.png"     # 可选，确保路径存在或删除这一行
