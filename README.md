@@ -2,6 +2,9 @@
 
 VNT GUI
 
+
+<img width="1101" height="1120" alt="图片" src="https://github.com/user-attachments/assets/e3e0d176-26a2-4ddf-944d-4585a36cb295" />
+
 ## Build
 
 ### Install
